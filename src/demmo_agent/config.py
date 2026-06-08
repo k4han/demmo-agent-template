@@ -5,8 +5,8 @@ from pathlib import Path
 
 
 APP_NAME = "demmo-agent"
-DEFAULT_OWNER = "<owner>"
-DEFAULT_REPO = "<repo>"
+DEFAULT_OWNER = "k4han"
+DEFAULT_REPO = "demmo-agent-template"
 DEFAULT_BRANCH = "main"
 
 

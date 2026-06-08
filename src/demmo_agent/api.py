@@ -8,7 +8,7 @@ app = FastAPI(title="Demmo Agent", version=__version__)
 @app.get("/")
 def root() -> dict[str, str]:
     return {
-        "name": "demmo-agent",
+        "name": "demmo-agent1",
         "version": __version__,
         "status": "ok",
     }

@@ -96,18 +96,23 @@ if (-not (Test-Path `$PYTHON_EXE)) {
     throw "Không tìm thấy python.exe tại `$PYTHON_EXE. Hãy chạy lại install.ps1."
 }
 
-# Không gọi .venv\Scripts\agent.exe ở đây.
-# Nếu gọi agent.exe rồi chạy `agent update`, Windows sẽ khóa agent.exe và uv không thể ghi đè nó.
 & `$PYTHON_EXE -m demmo_agent.cli @args
 exit `$LASTEXITCODE
 "@ | Set-Content -Path $AGENT_PS1 -Encoding UTF8
 
+Stage "7. Thêm BIN_DIR vào PATH (user scope)"
+$currentPath = [Environment]::GetEnvironmentVariable("Path", "User")
+if ($currentPath -notlike "*$BIN_DIR*") {
+    [Environment]::SetEnvironmentVariable("Path", "$currentPath;$BIN_DIR", "User")
+    $env:Path = "$env:Path;$BIN_DIR"
+    Write-Host "Đã thêm $BIN_DIR vào PATH (user scope)."
+} else {
+    Write-Host "$BIN_DIR đã có trong PATH."
+}
+
 Write-Host ""
 Write-Host "Installed successfully." -ForegroundColor Green
-Write-Host "Run:"
-Write-Host "  & `"$AGENT_PS1`""
-Write-Host "  & `"$AGENT_PS1`" update --owner $Owner --repo $Repo"
-Write-Host "  & `"$AGENT_PS1`" --version"
-Write-Host ""
-Write-Host "Optional: thêm vào PATH để gọi agent trực tiếp:"
-Write-Host "  $BIN_DIR"
+Write-Host "Mở terminal mới rồi chạy:"
+Write-Host "  agent"
+Write-Host "  agent update --owner $Owner --repo $Repo"
+Write-Host "  agent --version"

@@ -1,6 +1,6 @@
 param(
-    [string]$Owner = "<owner>",
-    [string]$Repo = "<repo>",
+    [string]$Owner = "k4han",
+    [string]$Repo = "demmo-agent-template",
     [string]$Branch = "main",
     [string]$AgentName = "demmo-agent"
 )

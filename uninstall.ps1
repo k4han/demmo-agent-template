@@ -12,23 +12,23 @@ function Stage($Name) {
 $AGENT_HOME = Join-Path $env:LOCALAPPDATA $AgentName
 $BIN_DIR = Join-Path $AGENT_HOME "bin"
 
-Stage "1. Xóa AGENT_HOME"
+Stage "1. Remove AGENT_HOME"
 if (Test-Path $AGENT_HOME) {
     Remove-Item -Recurse -Force $AGENT_HOME
-    Write-Host "Đã xóa $AGENT_HOME"
+    Write-Host "Removed $AGENT_HOME"
 } else {
-    Write-Host "$AGENT_HOME không tồn tại, bỏ qua."
+    Write-Host "$AGENT_HOME does not exist, skipping."
 }
 
-Stage "2. Xóa BIN_DIR khỏi PATH"
+Stage "2. Remove BIN_DIR from PATH"
 $currentPath = [Environment]::GetEnvironmentVariable("Path", "User")
 if ($currentPath -like "*$BIN_DIR*") {
     $newPath = ($currentPath -split ";" | Where-Object { $_ -ne $BIN_DIR }) -join ";"
     [Environment]::SetEnvironmentVariable("Path", $newPath, "User")
     $env:Path = ($env:Path -split ";" | Where-Object { $_ -ne $BIN_DIR }) -join ";"
-    Write-Host "Đã xóa $BIN_DIR khỏi PATH."
+    Write-Host "Removed $BIN_DIR from PATH."
 } else {
-    Write-Host "$BIN_DIR không có trong PATH."
+    Write-Host "$BIN_DIR is not in PATH."
 }
 
 Write-Host ""

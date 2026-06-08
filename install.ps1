@@ -13,7 +13,7 @@ function Stage($Name) {
 }
 
 if ($Owner -eq "<owner>" -or $Repo -eq "<repo>") {
-    throw "Vui lòng truyền Owner/Repo thật. Ví dụ: .\install.ps1 -Owner phanthekhanh014 -Repo demmo-agent"
+    throw "Vui lòng truyền Owner/Repo thật. Ví dụ: .\install.ps1 -Owner k4han -Repo demmo-agent-template"
 }
 
 $AGENT_HOME = Join-Path $env:LOCALAPPDATA $AgentName
@@ -78,23 +78,27 @@ if (Test-Path $SOURCE_DIR) {
 Copy-Item -Recurse -Force $root.FullName $SOURCE_DIR
 
 Stage "5. Tạo venv và uv pip install source"
-& $UV_EXE venv $VENV_DIR
+if (-not (Test-Path $VENV_DIR)) {
+    & $UV_EXE venv $VENV_DIR
+}
 
 $PYTHON_EXE = Join-Path $VENV_DIR "Scripts\python.exe"
-& $UV_EXE pip install --python $PYTHON_EXE $SOURCE_DIR
+& $UV_EXE pip install --python $PYTHON_EXE --reinstall $SOURCE_DIR
 
 Stage "6. Tạo agent.ps1"
 @"
 `$ErrorActionPreference = "Stop"
 
 `$AGENT_HOME = Join-Path `$env:LOCALAPPDATA "$AgentName"
-`$AGENT_EXE = Join-Path `$AGENT_HOME ".venv\Scripts\agent.exe"
+`$PYTHON_EXE = Join-Path `$AGENT_HOME ".venv\Scripts\python.exe"
 
-if (-not (Test-Path `$AGENT_EXE)) {
-    throw "Không tìm thấy agent.exe tại `$AGENT_EXE. Hãy chạy lại install.ps1."
+if (-not (Test-Path `$PYTHON_EXE)) {
+    throw "Không tìm thấy python.exe tại `$PYTHON_EXE. Hãy chạy lại install.ps1."
 }
 
-& `$AGENT_EXE @args
+# Không gọi .venv\Scripts\agent.exe ở đây.
+# Nếu gọi agent.exe rồi chạy `agent update`, Windows sẽ khóa agent.exe và uv không thể ghi đè nó.
+& `$PYTHON_EXE -m demmo_agent.cli @args
 exit `$LASTEXITCODE
 "@ | Set-Content -Path $AGENT_PS1 -Encoding UTF8
 

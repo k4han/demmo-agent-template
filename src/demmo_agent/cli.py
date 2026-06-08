@@ -19,7 +19,7 @@ cli = typer.Typer(
 
 def _version() -> str:
     try:
-        return version("demmo-agent")
+        return version("demmo-agent-template")
     except PackageNotFoundError:
         from demmo_agent import __version__
 
@@ -71,3 +71,7 @@ def update(
 
 def main() -> None:
     cli()
+
+
+if __name__ == "__main__":
+    main()

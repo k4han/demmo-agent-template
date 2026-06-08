@@ -3,7 +3,6 @@ from __future__ import annotations
 import os
 import shutil
 import subprocess
-import sys
 import zipfile
 from pathlib import Path
 from urllib.request import urlretrieve
@@ -23,7 +22,7 @@ def update_app(
     if owner.startswith("<") or repo.startswith("<"):
         raise RuntimeError(
             "Bạn cần cấu hình owner/repo thật trong demmo_agent/config.py "
-            "hoặc truyền biến môi trường DEMMO_AGENT_OWNER và DEMMO_AGENT_REPO."
+            "hoặc truyền --owner và --repo khi chạy update."
         )
 
     agent_home = get_agent_home()
@@ -65,7 +64,16 @@ def update_app(
         _run([str(uv_path), "venv", str(venv_dir)])
 
     python_exe = venv_dir / ("Scripts/python.exe" if os.name == "nt" else "bin/python")
+
     print("Installing app with uv pip...")
-    _run([str(uv_path), "pip", "install", "--python", str(python_exe), str(source_dir)])
+    _run([
+        str(uv_path),
+        "pip",
+        "install",
+        "--python",
+        str(python_exe),
+        "--reinstall",
+        str(source_dir),
+    ])
 
     print("Update completed.")

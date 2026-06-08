@@ -1,4 +1,4 @@
-# demmo-agent
+# demmo-agent-template
 
 Ứng dụng Python CLI đơn giản:
 
@@ -8,37 +8,35 @@ agent update
 agent --version
 ```
 
-- `agent`: chạy FastAPI app bằng uvicorn.
-- `agent update`: tải source mới nhất từ GitHub main branch và cài lại bằng uv riêng trong `AGENT_HOME`.
-- `agent --version`: xem phiên bản package.
+## Ghi chú quan trọng trên Windows
 
-## Cấu trúc cài đặt Windows
+Không nên để `agent.ps1` gọi trực tiếp `.venv\Scripts\agent.exe`, vì khi chạy:
 
-Mặc định:
-
-```text
-%LOCALAPPDATA%\demmo-agent
-├── bin
-│   ├── uv.exe
-│   └── agent.ps1
-├── download
-│   └── source.zip
-├── source
-│   └── ...
-└── .venv
-    └── Scripts
-        └── agent.exe
+```powershell
+agent update
 ```
 
-## Cài đặt
+Windows sẽ khóa chính file `agent.exe` đang chạy. Khi `uv pip install` cài lại package, nó cần xóa/ghi đè `agent.exe`, dẫn tới lỗi:
 
-Sửa `Owner` và `Repo` hoặc truyền tham số:
+```text
+failed to remove file ... Scripts/agent.exe: Access is denied. (os error 5)
+```
+
+Bản này sửa bằng cách để `agent.ps1` gọi:
+
+```powershell
+python.exe -m demmo_agent.cli
+```
+
+Như vậy `agent.exe` không bị process hiện tại khóa và update có thể ghi đè bình thường.
+
+## Cài đặt
 
 ```powershell
 .\install.ps1 -Owner "<owner>" -Repo "<repo>"
 ```
 
-Thêm thư mục sau vào PATH để gọi trực tiếp `agent` từ terminal mới:
+Sau khi cài, thêm thư mục này vào PATH:
 
 ```text
 %LOCALAPPDATA%\demmo-agent\bin

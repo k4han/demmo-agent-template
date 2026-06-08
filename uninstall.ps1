@@ -13,6 +13,7 @@ $AGENT_HOME = Join-Path $env:LOCALAPPDATA $AgentName
 $BIN_DIR = Join-Path $AGENT_HOME "bin"
 
 Stage "1. Remove AGENT_HOME"
+Set-Location $env:TEMP
 if (Test-Path $AGENT_HOME) {
     Remove-Item -Recurse -Force $AGENT_HOME
     Write-Host "Removed $AGENT_HOME"
